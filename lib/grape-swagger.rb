@@ -98,7 +98,7 @@ module Grape
                 }
                 operations.merge!({:errorResponses => http_codes}) unless http_codes.empty?
                 {
-                  :path => parse_path(route.route_path, api_version),
+                  :path => parse_path(route.route_path.gsub('(.:format)', ''), api_version),
                   :operations => [operations]
                 }
               end
@@ -123,7 +123,7 @@ module Grape
                   dataType = value.is_a?(Hash) ? value[:type]||'String' : 'String'
                   description = value.is_a?(Hash) ? value[:desc] : ''
                   required = value.is_a?(Hash) ? !!value[:required] : false
-                  paramType = path.match(":#{param}") ? 'path' : (method == 'POST') ? 'body' : 'query'
+                  paramType = path.match(":#{param}") ? 'path' : (method == 'POST' || method == 'PUT') ? 'form' : 'query'
                   name = (value.is_a?(Hash) && value[:full_name]) || param
                   {
                     paramType: paramType,
